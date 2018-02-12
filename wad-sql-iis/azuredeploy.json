@@ -44,10 +44,7 @@
         "wad_subnet": "wad-subnet",
         "sql_subnet": "sql-subnet",
         "iis_subnet": "iis-subnet",
-        "mgt_subnet": "mgt-subnet",
-        "wad_datadisk_1": "",
-        "sql_datadisk_1": "",
-        "sql_datadisk_2": ""
+        "mgt_subnet": "mgt-subnet"
     },
     "resources": [
         {
