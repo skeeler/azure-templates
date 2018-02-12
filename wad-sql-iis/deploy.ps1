@@ -36,7 +36,7 @@ param(
  $parametersFilePath = "azuredeploy.parameters.json",
 
  [string]
- $templateUri = "https://github.com/skeeler/azure-templates/blob/hc/wad-sql-iis/azuredeploy.json"
+ $templateUri = "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis/azuredeploy.json"
 )
 
 <#
