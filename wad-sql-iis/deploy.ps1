@@ -8,17 +8,8 @@
  .PARAMETER resourceGroupName
     The resource group where the template will be deployed. Can be the name of an existing or a new resource group.
 
- .PARAMETER resourceGroupLocation
-    A resource group location.
-
- .PARAMETER templateFilePath
-    Path to the template file.
-
  .PARAMETER parametersFilePath
     Path to the parameters file.
-
- .PARAMETER templateUri
-    URI for the template file.
 #>
 
 param(
@@ -26,18 +17,14 @@ param(
  [string]
  $resourceGroupName,
 
+ [Parameter(Mandatory=$True)]
  [string]
- $resourceGroupLocation = "canadacentral",
-
- [string]
- $templateFilePath = "azuredeploy.json",
-
- [string]
- $parametersFilePath = "azuredeploy.parameters.json",
-
- [string]
- $templateUri = "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis/azuredeploy.json"
+ $parametersFilePath
 )
+
+ $resourceGroupLocation = "canadacentral"
+ $templateFilePath = "azuredeploy.json"
+ $templateUri = "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis/azuredeploy.json"
 
 <#
 .SYNOPSIS
