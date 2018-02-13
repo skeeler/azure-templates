@@ -6,6 +6,9 @@
 # Azure
 azuredeploy\.parameters.*
 
+# Reference
+reference/
+
 # User-specific files
 *.suo
 *.user
