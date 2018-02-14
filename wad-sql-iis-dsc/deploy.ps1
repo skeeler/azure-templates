@@ -52,6 +52,9 @@ Write-Output "prior to proceeding."
 Write-Output ""
 
 Pause
+$deployStart = Get-Date
+Write-Output ""
+Write-Output "*** Starting deployment at: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")"
 Write-Output ""
 
 # Register RPs
@@ -88,3 +91,10 @@ else
 {
     New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri;
 }
+
+$deployTime = Get-Date - $deployStart
+Write-Output ""
+Write-Output "*** Deployment stopped at: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")"
+Write-Output ""
+Write-Output "*** Deployment took $($deployTime.Hours) hours $($deployTime.Minutes) minutes $($deployTime.Seconds) seconds"
+Write-Output ""
