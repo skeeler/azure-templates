@@ -406,9 +406,6 @@
                         "properties": {
                             "privateIPAddress": "10.100.0.4",
                             "privateIPAllocationMethod": "Static",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('WAD')].ip)]"
-                            },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('WAD')].subnet)]"
                             },
@@ -429,7 +426,6 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('WAD')].ip)]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('WAD')].subnet)]"
             ]
         },
@@ -1105,25 +1101,6 @@
                         }
                     }
                 ]
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "sku": {
-                "name": "Basic"
-            },
-            "name": "[variables('vmList')[variables('WAD')].ip]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4,
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('wad_dns')]"
-                }
             },
             "dependsOn": []
         },
