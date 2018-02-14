@@ -46,26 +46,21 @@
         "mgt_fqdn": "[concat(variables('mgt_dns'), '.', resourceGroup().location, '.cloudapp.azure.com')]",
         "virtualNetworkName": "[concat(resourceGroup().name, '-vnet')]",
         "storageAccountName": "[concat(resourceGroup().name, 'stg', substring(uniquestring(resourceGroup().name),0,3))]",
-        "wad_vm": "wad-vm",
-        "sql_vm": "sql-vm",
-        "iis_vm": "iis-vm",
-        "mgt_vm": "mgt-vm",
-        "wad_nic": "wad-nic",
-        "sql_nic": "sql-nic",
-        "iis_nic": "iis-nic",
-        "mgt_nic": "mgt-nic",
-        "wad_ip": "wad-ip",
-        "sql_ip": "sql-ip",
-        "iis_ip": "iis-ip",
-        "mgt_ip": "mgt-ip",
-        "wad_nsg": "wad-nsg",
-        "sql_nsg": "sql-nsg",
-        "iis_nsg": "iis-nsg",
-        "mgt_nsg": "mgt-nsg",
-        "wad_subnet": "wad-subnet",
-        "sql_subnet": "sql-subnet",
-        "iis_subnet": "iis-subnet",
-        "mgt_subnet": "mgt-subnet"
+        "vmPrefixes": ["wad", "sql", "iis", "mgt"],
+        "WAD": 0, "SQL":1, "IIS":2, "MGT":3,
+        "copy": [
+            {
+                "name": "vmList",
+                "count": "[length(variables('vmPrefixes'))]",
+                "input": {
+                    "name": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-vm')]",
+                    "nic": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-nic')]",
+                    "ip": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-ip')]",
+                    "nsg": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-nsg')]",
+                    "subnet": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-subnet')]"
+                }
+            }
+        ]
     },
     "resources": [
         {
