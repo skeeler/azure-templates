@@ -405,7 +405,7 @@
 
                         "properties": {
                             "privateIPAddress": "10.100.0.4",
-                            "privateIPAllocationMethod": "Dynamic",
+                            "privateIPAllocationMethod": "Static",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('WAD')].ip)]"
                             },
@@ -459,12 +459,8 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [
-                        "10.100.0.4"
-                    ],
-                    "appliedDnsServers": [
-                        "10.100.0.4"
-                    ]
+                    "dnsServers": [],
+                    "appliedDnsServers": []
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
@@ -504,12 +500,8 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [
-                        "10.100.0.4"
-                    ],
-                    "appliedDnsServers": [
-                        "10.100.0.4"
-                    ]
+                    "dnsServers": [],
+                    "appliedDnsServers": []
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
@@ -553,12 +545,8 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [
-                        "10.100.0.4"
-                    ],
-                    "appliedDnsServers": [
-                        "10.100.0.4"
-                    ]
+                    "dnsServers": [],
+                    "appliedDnsServers": []
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
