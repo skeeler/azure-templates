@@ -10,6 +10,7 @@ azuredeploy\.parameters.*
 reference/
 
 # User-specific files
+*.swp
 *.suo
 *.user
 *.userosscache
@@ -294,3 +295,4 @@ __pycache__/
 *.xsd.cs
 wad-sql-iis/azuredeploy.parameters.json
 wad-sql-iis/azuredeploy.parameters.3.json
+wad-sql-iis-dsc/azuredeploy.json
