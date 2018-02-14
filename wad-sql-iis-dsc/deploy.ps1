@@ -92,7 +92,8 @@ else
     New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri;
 }
 
-$deployTime = Get-Date - $deployStart
+$deployStop = Get-Date
+$deployTime = $deployStop - $deployStart
 Write-Output ""
 Write-Output "*** Deployment stopped at: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")"
 Write-Output ""
