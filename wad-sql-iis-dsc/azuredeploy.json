@@ -372,7 +372,8 @@
             },
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmList')[copyIndex(1)].name)]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmList')[copyIndex(1)].name)]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmList')[variables('WAD')].name, 'CreateADForest')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -1193,6 +1194,9 @@
                     "addressPrefixes": [
                         "10.100.0.0/16"
                     ]
+                },
+                "dhcpOptions": {
+                    "dnsServers": ["10.100.0.4"]
                 },
                 "subnets": [
                     {
