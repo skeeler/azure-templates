@@ -459,8 +459,12 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
+                    "dnsServers": [
+                        "10.100.0.4"
+                    ],
+                    "appliedDnsServers": [
+                        "10.100.0.4"
+                    ]
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
@@ -500,8 +504,12 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
+                    "dnsServers": [
+                        "10.100.0.4"
+                    ],
+                    "appliedDnsServers": [
+                        "10.100.0.4"
+                    ]
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
@@ -545,8 +553,12 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
+                    "dnsServers": [
+                        "10.100.0.4"
+                    ],
+                    "appliedDnsServers": [
+                        "10.100.0.4"
+                    ]
                 },
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
