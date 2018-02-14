@@ -65,7 +65,7 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('wad_vm')]",
+            "name": "[variables('vmList')[variables('WAD')].name]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -82,7 +82,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(variables('wad_vm'),'_OsDisk')]",
+                        "name": "[concat(variables('vmList')[variables('WAD')].name,'_OsDisk')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
@@ -92,7 +92,7 @@
                     "dataDisks": [
                         {
                             "lun": 0,
-                            "name": "[concat(variables('wad_vm'),'_DataDisk_1')]",
+                            "name": "[concat(variables('vmList')[variables('WAD')].name,'_DataDisk_1')]",
                             "createOption": "Empty",
                             "caching": "None",
                             "diskSizeGB": 32,
@@ -103,7 +103,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[variables('wad_vm')]",
+                    "computerName": "[variables('vmList')[variables('WAD')].name]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -115,7 +115,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('wad_nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('WAD')].nic)]"
                         }
                     ]
                 },
@@ -127,7 +127,7 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('wad_nic'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('WAD')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "resources": [
@@ -137,7 +137,7 @@
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', variables('wad_vm'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('WAD')].name)]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Powershell",
@@ -166,7 +166,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('iis_vm')]",
+            "name": "[variables('vmList')[variables('IIS')].name]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -183,7 +183,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(variables('iis_vm'),'_OsDisk')]",
+                        "name": "[concat(variables('vmList')[variables('IIS')].name,'_OsDisk')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
@@ -193,7 +193,7 @@
                     "dataDisks": []
                 },
                 "osProfile": {
-                    "computerName": "[variables('iis_vm')]",
+                    "computerName": "[variables('vmList')[variables('IIS')].name]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -205,7 +205,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('iis_nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('IIS')].nic)]"
                         }
                     ]
                 },
@@ -217,13 +217,13 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('iis_nic'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('IIS')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ]
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('mgt_vm')]",
+            "name": "[variables('vmList')[variables('MGT')].name]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -240,7 +240,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(variables('mgt_vm'),'_OsDisk')]",
+                        "name": "[concat(variables('vmList')[variables('MGT')].name,'_OsDisk')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
@@ -250,7 +250,7 @@
                     "dataDisks": []
                 },
                 "osProfile": {
-                    "computerName": "[variables('mgt_vm')]",
+                    "computerName": "[variables('vmList')[variables('MGT')].name]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -262,7 +262,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('mgt_nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('MGT')].nic)]"
                         }
                     ]
                 },
@@ -274,13 +274,13 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('mgt_nic'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('MGT')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ]
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('sql_vm')]",
+            "name": "[variables('vmList')[variables('SQL')].name]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -297,7 +297,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(variables('sql_vm'),'_OsDisk')]",
+                        "name": "[concat(variables('vmList')[variables('SQL')].name,'_OsDisk')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
@@ -307,7 +307,7 @@
                     "dataDisks": [
                         {
                             "lun": 0,
-                            "name": "[concat(variables('sql_vm'),'_DataDisk_1')]",
+                            "name": "[concat(variables('vmList')[variables('SQL')].name,'_DataDisk_1')]",
                             "createOption": "Empty",
                             "caching": "None",
                             "diskSizeGB": 64,
@@ -317,7 +317,7 @@
                         },
                         {
                             "lun": 1,
-                            "name": "[concat(variables('sql_vm'),'_DataDisk_2')]",
+                            "name": "[concat(variables('vmList')[variables('SQL')].name,'_DataDisk_2')]",
                             "createOption": "Empty",
                             "caching": "None",
                             "diskSizeGB": 64,
@@ -328,7 +328,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[variables('sql_vm')]",
+                    "computerName": "[variables('vmList')[variables('SQL')].name]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -340,7 +340,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('sql_nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('SQL')].nic)]"
                         }
                     ]
                 },
@@ -352,13 +352,13 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('sql_nic'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmList')[variables('SQL')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ]
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('wad_nic')]",
+            "name": "[variables('vmList')[variables('WAD')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -371,10 +371,10 @@
                             "privateIPAddress": "10.100.0.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('wad_ip'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('WAD')].ip)]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('wad_subnet'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('WAD')].subnet)]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -389,17 +389,17 @@
                 "enableIPForwarding": false,
                 "primary": true,
                 "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('wad_vm'))]"
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('WAD')].name)]"
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('wad_ip'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('wad_subnet'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('WAD')].ip)]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('WAD')].subnet)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('iis_nic')]",
+            "name": "[variables('vmList')[variables('IIS')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -412,10 +412,10 @@
                             "privateIPAddress": "10.100.2.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('iis_ip'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('IIS')].ip)]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('iis_subnet'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('IIS')].subnet)]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -430,17 +430,17 @@
                 "enableIPForwarding": false,
                 "primary": true,
                 "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('iis_vm'))]"
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('IIS')].name)]"
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('iis_ip'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('iis_subnet'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('IIS')].ip)]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('IIS')].subnet)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('mgt_nic')]",
+            "name": "[variables('vmList')[variables('MGT')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -453,10 +453,10 @@
                             "privateIPAddress": "10.100.3.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgt_ip'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('MGT')].ip)]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('mgt_subnet'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('MGT')].subnet)]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -470,22 +470,22 @@
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
                 },
                 "primary": true,
                 "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('mgt_vm'))]"
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('MGT')].name)]"
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgt_ip'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('mgt_subnet'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('MGT')].ip)]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('MGT')].subnet)]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('sql_nic')]",
+            "name": "[variables('vmList')[variables('SQL')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -498,10 +498,10 @@
                             "privateIPAddress": "10.100.1.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('sql_ip'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('SQL')].ip)]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('sql_subnet'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('SQL')].subnet)]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -516,17 +516,17 @@
                 "enableIPForwarding": false,
                 "primary": true,
                 "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('sql_vm'))]"
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('SQL')].name)]"
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('sql_ip'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('sql_subnet'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vmList')[variables('SQL')].ip)]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('vmList')[variables('SQL')].subnet)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[variables('wad_nsg')]",
+            "name": "[variables('vmList')[variables('WAD')].nsg]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -653,7 +653,7 @@
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[variables('mgt_nsg')]",
+            "name": "[variables('vmList')[variables('MGT')].nsg]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -801,7 +801,7 @@
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[variables('iis_nsg')]",
+            "name": "[variables('vmList')[variables('IIS')].nsg]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -947,7 +947,7 @@
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[variables('sql_nsg')]",
+            "name": "[variables('vmList')[variables('SQL')].nsg]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1077,7 +1077,7 @@
             "sku": {
                 "name": "Basic"
             },
-            "name": "[variables('wad_ip')]",
+            "name": "[variables('vmList')[variables('WAD')].ip]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1096,7 +1096,7 @@
             "sku": {
                 "name": "Basic"
             },
-            "name": "[variables('iis_ip')]",
+            "name": "[variables('vmList')[variables('IIS')].ip]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1116,7 +1116,7 @@
             "sku": {
                 "name": "Basic"
             },
-            "name": "[variables('mgt_ip')]",
+            "name": "[variables('vmList')[variables('MGT')].ip]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1136,7 +1136,7 @@
             "sku": {
                 "name": "Basic"
             },
-            "name": "[variables('sql_ip')]",
+            "name": "[variables('vmList')[variables('SQL')].ip]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1161,45 +1161,45 @@
                 },
                 "subnets": [
                     {
-                        "name": "[variables('wad_subnet')]",
+                        "name": "[variables('vmList')[variables('WAD')].subnet]",
 
                         "properties": {
                             "addressPrefix": "10.100.0.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('wad_nsg'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
                             },
                             "serviceEndpoints": []
                         }
                     },
                     {
-                        "name": "[variables('sql_subnet')]",
+                        "name": "[variables('vmList')[variables('SQL')].subnet]",
 
                         "properties": {
                             "addressPrefix": "10.100.1.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sql_nsg'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
                             },
                             "serviceEndpoints": []
                         }
                     },
                     {
-                        "name": "[variables('iis_subnet')]",
+                        "name": "[variables('vmList')[variables('IIS')].subnet]",
 
                         "properties": {
                             "addressPrefix": "10.100.2.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('iis_nsg'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
                             },
                             "serviceEndpoints": []
                         }
                     },
                     {
-                        "name": "[variables('mgt_subnet')]",
+                        "name": "[variables('vmList')[variables('MGT')].subnet]",
 
                         "properties": {
                             "addressPrefix": "10.100.3.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
                             },
                             "serviceEndpoints": []
                         }
@@ -1210,10 +1210,10 @@
                 "enableVmProtection": false
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('wad_nsg'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sql_nsg'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('iis_nsg'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
             ]
         },
         {
@@ -1251,7 +1251,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('mgt_vm'), '/IaaSAntimalware')]",
+            "name": "[concat(variables('vmList')[variables('MGT')].name, '/IaaSAntimalware')]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "scale": null,
@@ -1277,12 +1277,12 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('mgt_vm'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmList')[variables('MGT')].name)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-            "name": "[concat(variables('mgt_nsg'), '/Port_3389')]",
+            "name": "[concat(variables('vmList')[variables('MGT')].nsg, '/Port_3389')]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
@@ -1301,12 +1301,12 @@
                 "destinationAddressPrefixes": []
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-            "name": "[concat(variables('iis_nsg'), '/Port_80')]",
+            "name": "[concat(variables('vmList')[variables('IIS')].nsg, '/Port_80')]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
@@ -1325,75 +1325,75 @@
                 "destinationAddressPrefixes": []
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('iis_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('wad_subnet'))]",
+            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('WAD')].subnet)]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
                 "addressPrefix": "10.100.0.0/24",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('wad_nsg'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
                 },
                 "serviceEndpoints": []
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('wad_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('sql_subnet'))]",
+            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('SQL')].subnet)]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
                 "addressPrefix": "10.100.1.0/24",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sql_nsg'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
                 },
                 "serviceEndpoints": []
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('sql_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('iis_subnet'))]",
+            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('IIS')].subnet)]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
                 "addressPrefix": "10.100.2.0/24",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('iis_nsg'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
                 },
                 "serviceEndpoints": []
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('iis_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
             ]
         },
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('mgt_subnet'))]",
+            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('MGT')].subnet)]",
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
                 "addressPrefix": "10.100.3.0/24",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
                 },
                 "serviceEndpoints": []
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('mgt_nsg'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
             ]
         }
     ]
