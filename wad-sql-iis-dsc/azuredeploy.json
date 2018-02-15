@@ -1194,7 +1194,6 @@
                 "enableVmProtection": false
             },
             "dependsOn": [
-                "createSubnets",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]",
@@ -1367,6 +1366,7 @@
                 "serviceEndpoints": []
             },
             "dependsOn": [
+                "[variables('virtualNetworkName')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[copyIndex()].nsg)]"
             ]
         }
