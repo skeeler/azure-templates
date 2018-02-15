@@ -139,7 +139,7 @@
             "resources": [
                 {
                     "type": "extensions",
-                    "name": "CreateADForest",
+                    "name": "CreateDomain",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
@@ -373,7 +373,8 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('vmList')[copyIndex(1)].name)]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmList')[variables('WAD')].name, 'CreateADForest')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmList')[variables('WAD')].name, 'CreateDomain')]",
+                "UpdateVnetDnsServers"
             ],
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -1129,6 +1130,22 @@
             "sku": {
                 "name": "Basic"
             },
+            "name": "[variables('vmList')[variables('WAD')].ip]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Basic"
+            },
             "name": "[variables('vmList')[variables('MGT')].ip]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
@@ -1172,65 +1189,54 @@
                         "10.100.0.0/16"
                     ]
                 },
-                "dhcpOptions": {
-                    "dnsServers": ["10.100.0.4"]
-                },
-                "subnets": [
-                    {
-                        "name": "[variables('vmList')[variables('WAD')].subnet]",
-
-                        "properties": {
-                            "addressPrefix": "10.100.0.0/24",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
-                            },
-                            "serviceEndpoints": []
-                        }
-                    },
-                    {
-                        "name": "[variables('vmList')[variables('SQL')].subnet]",
-
-                        "properties": {
-                            "addressPrefix": "10.100.1.0/24",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
-                            },
-                            "serviceEndpoints": []
-                        }
-                    },
-                    {
-                        "name": "[variables('vmList')[variables('IIS')].subnet]",
-
-                        "properties": {
-                            "addressPrefix": "10.100.2.0/24",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
-                            },
-                            "serviceEndpoints": []
-                        }
-                    },
-                    {
-                        "name": "[variables('vmList')[variables('MGT')].subnet]",
-
-                        "properties": {
-                            "addressPrefix": "10.100.3.0/24",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
-                            },
-                            "serviceEndpoints": []
-                        }
-                    }
-                ],
                 "virtualNetworkPeerings": [],
                 "enableDdosProtection": false,
                 "enableVmProtection": false
             },
             "dependsOn": [
+                "createSubnets",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "UpdateVnetDnsServers",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "CreateDomain"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "name": "[variables('virtualNetworkName')]",
+                            "apiVersion": "2017-10-01",
+                            "location": "[resourceGroup().location]",
+                            "scale": null,
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "10.100.0.0/16"
+                                    ]
+                                },
+                                "dhcpOptions": {
+                                    "dnsServers": "10.100.0.4"
+                                },
+                                "virtualNetworkPeerings": [],
+                                "enableDdosProtection": false,
+                                "enableVmProtection": false
+                            }
+                        }
+                    ]
+                }
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -1346,70 +1352,22 @@
         },
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('WAD')].subnet)]",
+            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[copyIndex()].subnet)]",
+            "copy": {
+                "name": "createSubnets",
+                "count": "[length(variables('vmPrefixes'))]"
+            },
             "apiVersion": "2017-10-01",
             "scale": null,
             "properties": {
-                "addressPrefix": "10.100.0.0/24",
+                "addressPrefix": "[concat('10.100.', string(copyIndex()), '.0/24')]",
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[copyIndex()].nsg)]"
                 },
                 "serviceEndpoints": []
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('WAD')].nsg)]"
-            ]
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('SQL')].subnet)]",
-            "apiVersion": "2017-10-01",
-            "scale": null,
-            "properties": {
-                "addressPrefix": "10.100.1.0/24",
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
-                },
-                "serviceEndpoints": []
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('SQL')].nsg)]"
-            ]
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('IIS')].subnet)]",
-            "apiVersion": "2017-10-01",
-            "scale": null,
-            "properties": {
-                "addressPrefix": "10.100.2.0/24",
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
-                },
-                "serviceEndpoints": []
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('IIS')].nsg)]"
-            ]
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "name": "[concat(variables('virtualNetworkName'), '/', variables('vmList')[variables('MGT')].subnet)]",
-            "apiVersion": "2017-10-01",
-            "scale": null,
-            "properties": {
-                "addressPrefix": "10.100.3.0/24",
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
-                },
-                "serviceEndpoints": []
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[variables('MGT')].nsg)]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vmList')[copyIndex()].nsg)]"
             ]
         }
     ]
