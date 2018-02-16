@@ -7,7 +7,7 @@
             "minLength": 3,
             "maxLength": 50,
             "metadata": {
-                "description": "DNS prefix for public-facing VMs. Must be lowercase and between 3 and 50 characters in length. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,57}[a-z0-9]$ or it will raise an error. DNS labels must be unique within the region."
+                "description": "DNS prefix for public-facing VMs (IIS,MGT). Must be lowercase and between 3 and 50 characters in length. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,57}[a-z0-9]$ or it will raise an error. DNS labels must be unique within the region."
             }
         },
         "adminUsername": {
