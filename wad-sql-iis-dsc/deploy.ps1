@@ -102,12 +102,12 @@ $deployName = $resourceGroupName + (Get-Date -Format "yyMMdd-HHmmss")
 if ($deploySource -eq "command-line")
 {
     Write-Output "Deploying using local template file and command-line parameters..."
-    $dnsPrefix = "my-vm-prefix-" + (Get-Date -Format "HHmmss")
+    $dnsQualifier = "-qw-" + (Get-Date -Format "HHmm")
     $adminUsername = "admaccess"
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
 
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsPrefix $dnsPrefix -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose
 }
 elseif ($deploySource -eq "local")
 {
