@@ -46,25 +46,20 @@
         }
     },
     "variables": {
-        "wad_dns": "[concat(parameters('dnsPrefix'), '-wad')]",
-        "iis_dns": "[concat(parameters('dnsPrefix'), '-iis')]",
-        "mgt_dns": "[concat(parameters('dnsPrefix'), '-mgt')]",
-        "iis_fqdn": "[concat(variables('iis_dns'), '.', resourceGroup().location, '.cloudapp.azure.com')]",
-        "mgt_fqdn": "[concat(variables('mgt_dns'), '.', resourceGroup().location, '.cloudapp.azure.com')]",
         "virtualNetworkName": "[concat(resourceGroup().name, '-vnet')]",
         "storageAccountName": "[concat(resourceGroup().name, 'stg', substring(uniquestring(resourceGroup().name),0,3))]",
-        "vmPrefixes": ["wad", "sql", "iis", "mgt"],
+        "vmSuffixes": ["wad", "sql", "iis", "mgt"],
         "WAD": 0, "SQL": 1, "IIS": 2, "MGT": 3,
         "copy": [
             {
                 "name": "vmList",
-                "count": "[length(variables('vmPrefixes'))]",
+                "count": "[length(variables('vmSuffixes'))]",
                 "input": {
-                    "name": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-vm')]",
-                    "nic": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-nic')]",
-                    "ip": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-ip')]",
-                    "nsg": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-nsg')]",
-                    "subnet": "[concat(variables('vmPrefixes')[copyIndex('vmList')], '-subnet')]"
+                    "name": "[concat(parameters('dnsPrefix'), '-', variables('vmSuffixes')[copyIndex('vmList')])]",
+                    "nic": "[concat(variables('vmSuffixes')[copyIndex('vmList')], '-nic')]",
+                    "ip": "[concat(variables('vmSuffixes')[copyIndex('vmList')], '-ip')]",
+                    "nsg": "[concat(variables('vmSuffixes')[copyIndex('vmList')], '-nsg')]",
+                    "subnet": "[concat(variables('vmSuffixes')[copyIndex('vmList')], '-subnet')]"
                 }
             }
         ]
@@ -1081,76 +1076,21 @@
             "dependsOn": []
         },
         {
+            "comments": "Create publicIPAddresses for VMs",
             "type": "Microsoft.Network/publicIPAddresses",
-            "sku": {
-                "name": "Basic"
-            },
-            "name": "[variables('vmList')[variables('IIS')].ip]",
+            "name": "[variables('vmList')[copyIndex()].ip]",
             "apiVersion": "2017-10-01",
+            "copy": {
+                "name": "publicIPAddressCopy",
+                "count": "[length(variables('vmList'))]"
+            },
             "location": "[resourceGroup().location]",
-            "scale": null,
             "properties": {
-                "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "[variables('iis_dns')]",
-                    "fqdn": "[variables('iis_fqdn')]"
+                    "domainNameLabel": "[variables('vmList')[copyIndex()].name]"
                 }
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "sku": {
-                "name": "Basic"
-            },
-            "name": "[variables('vmList')[variables('WAD')].ip]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "sku": {
-                "name": "Basic"
-            },
-            "name": "[variables('vmList')[variables('MGT')].ip]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4,
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('mgt_dns')]",
-                    "fqdn": "[variables('mgt_fqdn')]"
-                }
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "sku": {
-                "name": "Basic"
-            },
-            "name": "[variables('vmList')[variables('SQL')].ip]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4
-            },
-            "dependsOn": []
+            }
         },
         {
             "type": "Microsoft.Network/virtualNetworks",
@@ -1162,7 +1102,7 @@
                 "copy": [
                     {
                         "name": "subnets",
-                        "count": "[length(variables('vmPrefixes'))]",
+                        "count": "[length(variables('vmList'))]",
                         "input": {
                             "name": "[variables('vmList')[copyIndex('subnets')].subnet]",
                             "properties": {
@@ -1213,7 +1153,7 @@
                                 "copy": [
                                     {
                                         "name": "subnets",
-                                        "count": "[length(variables('vmPrefixes'))]",
+                                        "count": "[length(variables('vmList'))]",
                                         "input": {
                                             "name": "[variables('vmList')[copyIndex('subnets')].subnet]",
                                             "properties": {
