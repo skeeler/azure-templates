@@ -107,8 +107,10 @@ if ($deploySource -eq "command-line")
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
     $ouPath = "OU=Users,DC=contoso,DC=local"
-
+<#
     New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsPrefix $dnsPrefix -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -ouPath $ouPath -Name $deployName -Verbose
+#>
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsPrefix $dnsPrefix -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose
 }
 elseif ($deploySource -eq "local")
 {

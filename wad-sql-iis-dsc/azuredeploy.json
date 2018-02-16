@@ -25,6 +25,7 @@
         },
         "ouPath": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "The OU, e.g. OU=Users,DC=contoso,DC=local"
             }
