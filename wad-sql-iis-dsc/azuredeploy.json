@@ -1230,7 +1230,9 @@
                                     ]
                                 },
                                 "dhcpOptions": {
-                                    "dnsServers": "10.100.0.4"
+                                    "dnsServers": [
+                                        "10.100.0.4"
+                                    ]
                                 },
                                 "virtualNetworkPeerings": [],
                                 "enableDdosProtection": false,
