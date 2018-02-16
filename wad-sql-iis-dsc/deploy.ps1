@@ -15,16 +15,27 @@
 param(
 [Parameter(Mandatory=$True)]
  [string]
- $resourceGroupName,
-
- [Parameter(Mandatory=$True)]
- [string]
- $parametersFilePath
+ $resourceGroupName
 )
 
- $resourceGroupLocation = "canadacentral"
- $templateFilePath = "azuredeploy.json"
- $templateUri = "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis-dsc/azuredeploy.json"
+# Check these variables are set correctly
+$deploySource = "command-line"     # Set to 'command-line', 'local', or 'github'
+$deploySourceValid = @('command-line', 'local', 'github')
+$resourceGroupLocation = "canadacentral"
+$templateFilePath = "azuredeploy.json"
+$parametersFilePath = "azuredeploy.parameters.json"
+$templateUri = "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis-dsc/azuredeploy.json"
+
+if ($deploySource -notin $deploySourceValid)
+{
+    Write-Output ""
+    Write-Output "Deployment did not run!"
+    Write-Error 'Invalid value specified for $deploySource parameter' -ErrorAction Continue
+    Write-Output "Specify one of: 'command-line', 'local', or 'github'"
+    Write-Output "Current value is: $($deploySource)"
+    Write-Output ""
+    return
+}
 
 <#
 .SYNOPSIS
@@ -83,13 +94,47 @@ else{
 
 # Start the deployment
 Write-Host "Starting deployment...";
-if(Test-Path $parametersFilePath)
+
+# Setup different deployment names if you want to run multiple deployments concurrently
+$deployName = $resourceGroupName + (Get-Date -Format "yyMMdd-HHmmss")
+
+# Run the deployment as "command-line", "local", or "github"
+if ($deploySource -eq "command-line")
 {
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -TemplateParameterFile $parametersFilePath -Verbose;
+    Write-Output "Deploying using local template file and command-line parameters..."
+    $dnsPrefix = "qualiware" + (Get-Date -Format "MMddHHmmss")
+    $adminUsername = "admaccess"
+    $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
+    $domainName = "contoso.local"
+    $ouPath = "OU=Users,DC=contoso,DC=local"
+
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsPrefix $dnsPrefix -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -ouPath $ouPath -Name $deployName -Verbose
 }
-else
+elseif ($deploySource -eq "local")
 {
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -Verbose;
+    if(Test-Path $parametersFilePath)
+    {
+        Write-Output "Deploying using local template file and local parameters file..."
+        New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath -Name $deployName -Verbose
+    }
+    else
+    {
+        Write-Output "Deploying using local template file and no parameters file..."
+        New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -Name $deployName -Verbose;
+    }
+}
+elseif ($deploySource -eq "github")
+{
+    if(Test-Path $parametersFilePath)
+    {
+        Write-Output "Deploying using GitHub-based template file and local parameters file..."
+        New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -TemplateParameterFile $parametersFilePath -Name $deployName -Verbose
+    }
+    else
+    {
+        Write-Output "Deploying using GitHub-based template file and no parameters file..."
+        New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -Name $deployName -Verbose;
+    }
 }
 
 $deployStop = Get-Date
