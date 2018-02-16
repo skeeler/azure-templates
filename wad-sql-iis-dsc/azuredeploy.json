@@ -35,7 +35,7 @@
             "metadata": {
                 "description": "The location of resources, such as templates and DSC modules, that the template depends on"
             },
-            "defaultValue": "https://raw.githubusercontent.com/skeeler/azure-templates/hc/wad-sql-iis-dsc"
+            "defaultValue": "https://raw.githubusercontent.com/skeeler/azure-templates/master/wad-sql-iis-dsc"
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
