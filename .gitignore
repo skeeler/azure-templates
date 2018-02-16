@@ -3,10 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Azure
-azuredeploy.parameters.json
+# Reference
+reference/
 
 # User-specific files
+*.swp
 *.suo
 *.user
 *.userosscache
@@ -290,3 +291,5 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 wad-sql-iis/azuredeploy.parameters.json
+wad-sql-iis/azuredeploy.parameters.3.json
+wad-sql-iis-dsc/azuredeploy.json
