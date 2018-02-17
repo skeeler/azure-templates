@@ -393,35 +393,19 @@
             "name": "[variables('resourceNames')[variables('WAD')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
-            "scale": null,
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "ipconfig1",
+                        "name": "ipconfig-wad",
                         "properties": {
                             "privateIPAddress": "10.100.0.4",
                             "privateIPAllocationMethod": "Static",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('WAD')].ip)]"
-                            },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('WAD')].subnet)]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4"
+                            }
                         }
                     }
-                ],
-                "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
-                },
-                "enableAcceleratedNetworking": false,
-                "enableIPForwarding": false,
-                "primary": true,
-                "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('WAD')].name)]"
-                }
+                ]
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('WAD')].ip)]",
@@ -430,38 +414,50 @@
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('resourceNames')[variables('IIS')].nic]",
+            "name": "[variables('resourceNames')[variables('SQL')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
-            "scale": null,
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "ipconfig1",
+                        "name": "ipconfig-sql",
                         "properties": {
-                            "privateIPAddress": "10.100.2.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('SQL')].ip)]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('SQL')].subnet)]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('SQL')].ip)]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('resourceNames')[variables('IIS')].nic]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig-iis",
+                        "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('IIS')].ip)]"
                             },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('IIS')].subnet)]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4"
+                            }
                         }
                     }
-                ],
-                "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
-                },
-                "enableAcceleratedNetworking": false,
-                "enableIPForwarding": false,
-                "primary": true,
-                "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('IIS')].name)]"
-                }
+                ]
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('IIS')].ip)]",
@@ -473,81 +469,24 @@
             "name": "[variables('resourceNames')[variables('MGT')].nic]",
             "apiVersion": "2017-10-01",
             "location": "[resourceGroup().location]",
-            "scale": null,
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "ipconfig1",
+                        "name": "ipconfig-mgt",
                         "properties": {
-                            "privateIPAddress": "10.100.3.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('MGT')].ip)]"
                             },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('MGT')].subnet)]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4"
+                            }
                         }
                     }
-                ],
-                "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
-                },
-                "enableAcceleratedNetworking": false,
-                "enableIPForwarding": false,
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('resourceNames')[variables('MGT')].nsg)]"
-                },
-                "primary": true,
-                "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('MGT')].name)]"
-                }
+                ]
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('MGT')].ip)]",
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('resourceNames')[variables('SQL')].nic]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAddress": "10.100.1.4",
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('SQL')].ip)]"
-                            },
-                            "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('SQL')].subnet)]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4"
-                        }
-                    }
-                ],
-                "dnsSettings": {
-                    "dnsServers": [],
-                    "appliedDnsServers": []
-                },
-                "enableAcceleratedNetworking": false,
-                "enableIPForwarding": false,
-                "primary": true,
-                "virtualMachine": {
-                    "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('SQL')].name)]"
-                }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('resourceNames')[variables('SQL')].ip)]",
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
             ]
         },
@@ -1117,10 +1056,7 @@
                     "addressPrefixes": [
                         "10.100.0.0/16"
                     ]
-                },
-                "virtualNetworkPeerings": [],
-                "enableDdosProtection": false,
-                "enableVmProtection": false
+                }
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('resourceNames')[variables('WAD')].nsg)]",
