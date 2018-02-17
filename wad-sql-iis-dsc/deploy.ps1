@@ -101,7 +101,7 @@ $deployName = $resourceGroupName + (Get-Date -Format "yyMMdd-HHmmss")
 # Run the deployment as "command-line", "local", or "github"
 if ($deploySource -eq "command-line")
 {
-    $dnsQualifier = "-qw-8080"
+    $dnsQualifier = "-qual-101"
     $adminUsername = "admaccess"
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
