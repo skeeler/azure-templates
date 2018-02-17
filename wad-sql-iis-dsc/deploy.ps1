@@ -102,12 +102,15 @@ $deployName = $resourceGroupName + (Get-Date -Format "yyMMdd-HHmmss")
 if ($deploySource -eq "command-line")
 {
     Write-Output "Deploying using local template file and command-line parameters..."
-    $dnsQualifier = "-qw-" + (Get-Date -Format "HHmm")
+    $dnsQualifier = "-qw-1742" #+ (Get-Date -Format "HHmm")
     $adminUsername = "admaccess"
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
+    $ouPath = "OU=Staging, DC=contoso, DC=local"
 
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose -ouPath $ouPath #-DeploymentDebugLogLevel All
+
+    # https://azure.microsoft.com/en-us/blog/debugging-arm-template-deployments/
 }
 elseif ($deploySource -eq "local")
 {
