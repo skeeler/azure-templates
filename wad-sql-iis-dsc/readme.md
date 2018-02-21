@@ -11,5 +11,4 @@ Each VM has its own subnet, all included in a single virtual network. Creates th
 The template demonstrates template features, including:
 * Using parameter files to define alternate configurations
 * Resource replication using copy loops
-* DSC extension
-* Domain join extension
+* DSC extensions for creating and joining the domain
