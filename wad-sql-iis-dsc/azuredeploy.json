@@ -61,6 +61,14 @@
                     "subnet": "[concat(variables('vmPrefixes')[copyIndex('resourceNames')], '-subnet')]"
                 }
             }
+        ],
+        "dnsServerAddress": "10.100.0.4",
+        "vnetAddressSpace": "10.100.0.0/16",
+        "subnetAddressSpace": [
+            "10.100.0.0/24",
+            "10.100.1.0/24",
+            "10.100.2.0/24",
+            "10.100.3.0/24"
         ]
     },
     "resources": [
@@ -130,40 +138,39 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('resourceNames')[variables('WAD')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[variables('WAD')].name, '/CreateDomain')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('WAD')].name)]"
             ],
-            "resources": [
-                {
-                    "type": "extensions",
-                    "name": "CreateDomain",
-                    "apiVersion": "2017-03-30",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('WAD')].name)]"
-                    ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "CreateDomain.ps1\\CreateDomain",
                     "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.19",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "ModulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/CreateADPDC.zip', parameters('_artifactsLocationSasToken'))]",
-                            "ConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                }
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
+                        "DomainName": "[parameters('domainName')]",
+                        "AdminCreds": {
+                            "UserName": "[parameters('adminUsername')]",
+                            "Password": "PrivateSettingsRef:AdminPassword"
                         }
                     }
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
                 }
-            ]
+            }
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
@@ -358,13 +365,13 @@
             ]
         },
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[copyIndex(1)].name, '/joindomain')]",
-            "apiVersion": "2015-06-15",
             "copy": {
                 "name": "domainJoinCopy",
                 "count": "[sub(length(variables('resourceNames')), 1)]"
             },
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[copyIndex(1)].name, '/JoinDomain')]",
+            "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('resourceNames')[copyIndex(1)].name)]",
@@ -372,19 +379,27 @@
                 "UpdateVnetDnsServers"
             ],
             "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "JsonADDomainExtension",
-                "typeHandlerVersion": "1.3",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "Name": "[parameters('domainName')]",
-                    "OUPath": "[parameters('ouPath')]",
-                    "User": "[concat(variables('netbiosDomainName'), '\\', parameters('adminUsername'))]",
-                    "Restart": "true",
-                    "Options": 3
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "JoinDomain.ps1\\JoinDomain",
+                    "properties": {
+                        "DNSServer": "[variables('dnsServerAddress')]",
+                        "DomainName": "[parameters('domainName')]",
+                        "AdminCreds": {
+                            "UserName": "[parameters('adminUsername')]",
+                            "Password": "PrivateSettingsRef:AdminPassword"
+                        }
+                    }
                 },
                 "protectedSettings": {
-                    "Password": "[parameters('adminPassword')]"
+                    "items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
                 }
             }
         },
@@ -398,7 +413,7 @@
                     {
                         "name": "ipconfig-wad",
                         "properties": {
-                            "privateIPAddress": "10.100.0.4",
+                            "privateIPAddress": "[variables('dnsServerAddress')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('resourceNames')[variables('WAD')].subnet)]"
@@ -1044,7 +1059,7 @@
                         "input": {
                             "name": "[variables('resourceNames')[copyIndex('subnets')].subnet]",
                             "properties": {
-                                "addressPrefix": "[concat('10.100.', string(copyIndex('subnets')), '.0/24')]",
+                                "addressPrefix": "[variables('subnetAddressSpace')[copyIndex('subnets')]]",
                                 "networkSecurityGroup": {
                                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('resourceNames')[copyIndex('subnets')].nsg)]"
                                 }
@@ -1054,7 +1069,7 @@
                 ],
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.100.0.0/16"
+                        "[variables('vnetAddressSpace')]"
                     ]
                 }
             },
@@ -1092,7 +1107,7 @@
                                         "input": {
                                             "name": "[variables('resourceNames')[copyIndex('subnets')].subnet]",
                                             "properties": {
-                                                "addressPrefix": "[concat('10.100.', string(copyIndex('subnets')), '.0/24')]",
+                                                "addressPrefix": "[variables('subnetAddressSpace')[copyIndex('subnets')]]",
                                                 "networkSecurityGroup": {
                                                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('resourceNames')[copyIndex('subnets')].nsg)]"
                                                 }
@@ -1102,12 +1117,12 @@
                                 ],
                                 "addressSpace": {
                                     "addressPrefixes": [
-                                        "10.100.0.0/16"
+                                        "[variables('vnetAddressSpace')]"
                                     ]
                                 },
                                 "dhcpOptions": {
                                     "dnsServers": [
-                                        "10.100.0.4"
+                                        "[variables('dnsServerAddress')]"
                                     ]
                                 },
                                 "virtualNetworkPeerings": [],
