@@ -12,3 +12,5 @@ The template demonstrates template features, including:
 * Using parameter files to define alternate configurations
 * Resource replication using copy loops
 * DSC extensions for creating and joining the domain
+
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
