@@ -409,7 +409,7 @@
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat(variables('resourceNames')[variables('IIS')].name, '/JoinDomain')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('IIS')].name, 'JoinDomain')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -417,7 +417,7 @@
                 "typeHandlerVersion": "2.9",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/Net461Install.zip')]",
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
                     "configurationFunction": "Net461Install.ps1\\Net461Install",
                 }
@@ -429,7 +429,7 @@
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat(variables('resourceNames')[variables('IIS')].name, '/Net461Install')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('IIS')].name, 'Net461Install')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -437,7 +437,7 @@
                 "typeHandlerVersion": "2.9",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/EnableWebServer.zip')]",
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
                     "configurationFunction": "EnableWebServer.ps1\\EnableWebServer",
                 }
