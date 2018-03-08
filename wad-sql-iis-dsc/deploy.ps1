@@ -101,13 +101,15 @@ $deployName = $resourceGroupName + (Get-Date -Format "yyMMdd-HHmmss")
 # Run the deployment as "command-line", "local", or "github"
 if ($deploySource -eq "command-line")
 {
-    $dnsQualifier = "-qual-103"
+    $dnsQualifier = "-qual-0103"
     $adminUsername = "admaccess"
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
+    #$_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/master/wad-sql-iis-dsc"
+    $_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/windows-features/wad-sql-iis-dsc"
 
     Write-Output "Deploying using local template file and command-line parameters..."
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose   #-DeploymentDebugLogLevel All
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -Verbose   #-DeploymentDebugLogLevel All
 
     # https://azure.microsoft.com/en-us/blog/debugging-arm-template-deployments/
 }
