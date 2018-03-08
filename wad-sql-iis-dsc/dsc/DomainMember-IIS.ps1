@@ -68,11 +68,12 @@ Configuration DomainMember-IIS
         #>
 
         <# For PowerShell 4.0 we can simulate WindowsFeatureSet using this instead #>
-        @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer").ForEach({
-
-            WindowsFeature $_
+        $features = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer")
+        foreach ($feature in $features)
+        {
+            WindowsFeature $feature
             {
-               Name = $_
+               Name = $feature
                Ensure = 'Present'
                DependsOn = "[xComputer]DomainJoin"
             }
