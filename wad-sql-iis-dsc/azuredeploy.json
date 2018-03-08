@@ -404,6 +404,46 @@
             }
         },
         {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[variables('IIS')].name, '/Net461Install')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat(variables('resourceNames')[variables('IIS')].name, '/JoinDomain')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "Net461Install.ps1\\Net461Install",
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[variables('IIS')].name, '/EnableWebServer')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat(variables('resourceNames')[variables('IIS')].name, '/Net461Install')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "EnableWebServer.ps1\\EnableWebServer",
+                }
+            }
+        },
+        {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('resourceNames')[variables('WAD')].nic]",
             "apiVersion": "2017-10-01",
