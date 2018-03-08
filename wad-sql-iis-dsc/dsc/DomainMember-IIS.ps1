@@ -58,16 +58,26 @@ Configuration DomainMember-IIS
             The config below ensures IIS and .NET Framework 4.6.1 are present.
         #>
 
-        WindowsFeature IIS
+        WindowsFeatureSet RequiredFeatures
         {
-            Ensure = "Present"
-            Name = "Web-Server"
+            Name = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer")
+            Ensure = 'Present'
             DependsOn = "[xComputer]DomainJoin"
+        }
+
+        Script RegisterAspNet
+        {
+            DependsOn = "[WindowsFeatureSet]RequiredFeatures"
+            SetScript = {
+                & C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_regiis.exe -i
+            }
+            TestScript = { return $false }
+            GetScript = { @{ } }
         }
 
         Script Install_Net_4.6.1
         {
-            DependsOn = "[WindowsFeature]IIS"
+            DependsOn = "[WindowsFeatureSet]RequiredFeatures"
 
             SetScript = {
                 $SourceURI = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=49981"
