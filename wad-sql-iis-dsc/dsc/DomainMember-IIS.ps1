@@ -65,6 +65,7 @@ Configuration DomainMember-IIS
             DependsOn = "[xComputer]DomainJoin"
         }
 
+        <# Only required for Windows Server 2008 or Windows Server 2008 R2
         Script RegisterAspNet
         {
             DependsOn = "[WindowsFeatureSet]RequiredFeatures"
@@ -74,6 +75,7 @@ Configuration DomainMember-IIS
             TestScript = { return $false }
             GetScript = { @{ } }
         }
+        #>
 
         Script Install_Net_4.6.1
         {
