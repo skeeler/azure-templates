@@ -105,9 +105,11 @@ if ($deploySource -eq "command-line")
     $adminUsername = "admaccess"
     $adminPassword = ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force
     $domainName = "contoso.local"
+    #$_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/master/wad-sql-iis-dsc"
+    $_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/windows-features/wad-sql-iis-dsc"
 
     Write-Output "Deploying using local template file and command-line parameters..."
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -Verbose   #-DeploymentDebugLogLevel All
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -Verbose   #-DeploymentDebugLogLevel All
 
     # https://azure.microsoft.com/en-us/blog/debugging-arm-template-deployments/
 }
