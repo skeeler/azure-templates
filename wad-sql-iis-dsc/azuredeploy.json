@@ -142,7 +142,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[variables('WAD')].name, '/CreateDomain')]",
+            "name": "[concat(variables('resourceNames')[variables('WAD')].name, '/DomainController')]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
@@ -154,9 +154,9 @@
                 "typeHandlerVersion": "2.9",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/extensions.zip')]",
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
-                    "configurationFunction": "CreateDomain.ps1\\CreateDomain",
+                    "configurationFunction": "DomainController.ps1\\DomainController",
                     "properties": {
                         "DomainName": "[parameters('domainName')]",
                         "AdminCreds": {
@@ -251,6 +251,41 @@
             ]
         },
         {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[variables('SQL')].name, '/DomainMember')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('SQL')].name)]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
+                "UpdateVnetDnsServers"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/extensions.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "DomainMember.ps1\\DomainMember",
+                    "properties": {
+                        "DNSServer": "[variables('dnsServerAddress')]",
+                        "DomainName": "[parameters('domainName')]",
+                        "AdminCreds": {
+                            "UserName": "[parameters('adminUsername')]",
+                            "Password": "PrivateSettingsRef:AdminPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('resourceNames')[variables('IIS')].name]",
             "apiVersion": "2017-03-30",
@@ -306,6 +341,41 @@
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('resourceNames')[variables('IIS')].nic)]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('resourceNames')[variables('IIS')].name, '/DomainMember-IIS')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('IIS')].name)]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
+                "UpdateVnetDnsServers"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/extensions.zip')]",
+                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
+                    "configurationFunction": "DomainMember-IIS.ps1\\DomainMember-IIS",
+                    "properties": {
+                        "DNSServer": "[variables('dnsServerAddress')]",
+                        "DomainName": "[parameters('domainName')]",
+                        "AdminCreds": {
+                            "UserName": "[parameters('adminUsername')]",
+                            "Password": "PrivateSettingsRef:AdminPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            }
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
@@ -365,17 +435,13 @@
             ]
         },
         {
-            "copy": {
-                "name": "domainJoinCopy",
-                "count": "[sub(length(variables('resourceNames')), 1)]"
-            },
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[copyIndex(1)].name, '/JoinDomain')]",
+            "name": "[concat(variables('resourceNames')[variables('MGT')].name, '/DomainMember')]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('resourceNames')[copyIndex(1)].name)]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'CreateDomain')]",
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('MGT')].name)]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
                 "UpdateVnetDnsServers"
             ],
             "properties": {
@@ -384,9 +450,9 @@
                 "typeHandlerVersion": "2.9",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/modules.zip')]",
+                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/extensions.zip')]",
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
-                    "configurationFunction": "JoinDomain.ps1\\JoinDomain",
+                    "configurationFunction": "DomainMember.ps1\\DomainMember",
                     "properties": {
                         "DNSServer": "[variables('dnsServerAddress')]",
                         "DomainName": "[parameters('domainName')]",
@@ -397,49 +463,9 @@
                     }
                 },
                 "protectedSettings": {
-                    "items": {
+                    "Items": {
                         "AdminPassword": "[parameters('adminPassword')]"
                     }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[variables('IIS')].name, '/Net461Install')]",
-            "apiVersion": "2017-03-30",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('IIS')].name, 'JoinDomain')]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.9",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/Net461Install.zip')]",
-                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
-                    "configurationFunction": "Net461Install.ps1\\Net461Install",
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[variables('IIS')].name, '/EnableWebServer')]",
-            "apiVersion": "2017-03-30",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('IIS')].name, 'Net461Install')]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.9",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "modulesUrl": "[concat(parameters('_artifactsLocation'), '/dsc/EnableWebServer.zip')]",
-                    "sasToken": "[parameters('_artifactsLocationSasToken')]",
-                    "configurationFunction": "EnableWebServer.ps1\\EnableWebServer",
                 }
             }
         },
@@ -1125,7 +1151,7 @@
             "name": "UpdateVnetDnsServers",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "CreateDomain"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]"
             ],
             "properties": {
                 "mode": "Incremental",
