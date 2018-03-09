@@ -58,16 +58,15 @@ Configuration DomainMember-IIS
             The config below ensures IIS and .NET Framework 4.6.1 are present.
         #>
 
-        <# -- WindowsFeatureSet requires PowerShell 5.0 --
+        <# -- WindowsFeatureSet requires PowerShell 5.0 #>
         WindowsFeatureSet RequiredFeatures
         {
             Name = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer")
             Ensure = 'Present'
             DependsOn = "[xComputer]DomainJoin"
         }
-        #>
 
-        <# For PowerShell 4.0 we can simulate WindowsFeatureSet using this instead #>
+        <# For PowerShell 4.0 we can simulate WindowsFeatureSet using this instead
         $features = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer")
         foreach ($feature in $features)
         {
@@ -75,9 +74,10 @@ Configuration DomainMember-IIS
             {
                Name = $feature
                Ensure = 'Present'
-               DependsOn = "[xComputer]DomainJoin"
+               DependsOn = "[Script]Install_Net_4.6.1"
             }
         }
+        #>
 
         <# Only required for Windows Server 2008 or Windows Server 2008 R2
         Script RegisterAspNet
