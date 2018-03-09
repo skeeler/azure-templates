@@ -15,7 +15,7 @@ Configuration DomainMember-IIS
         [String]$DNSServer
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, xComputerManagement, xNetworking
+    Import-DscResource -ModuleName xActiveDirectory, xComputerManagement, xNetworking, PSDscResources
 
     $Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
     $InterfaceAlias=$($Interface.Name)
@@ -61,7 +61,7 @@ Configuration DomainMember-IIS
         <# -- WindowsFeatureSet requires PowerShell 5.0 #>
         WindowsFeatureSet RequiredFeatures
         {
-            Name = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FS-FileServer")
+            Name = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FileAndStorage-Services", "FS-FileServer")
             Ensure = 'Present'
             DependsOn = "[xComputer]DomainJoin"
         }
