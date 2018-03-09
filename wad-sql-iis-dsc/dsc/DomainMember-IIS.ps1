@@ -15,7 +15,10 @@ Configuration DomainMember-IIS
         [String]$DNSServer
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, xComputerManagement, xNetworking, PSDesiredStateConfiguration
+    Import-DscResource -ModuleName xActiveDirectory
+    Import-DscResource -ModuleName xComputerManagement
+    Import-DscResource -ModuleName xNetworking
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
 
     $Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
     $InterfaceAlias=$($Interface.Name)
