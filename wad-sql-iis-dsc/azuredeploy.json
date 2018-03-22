@@ -45,7 +45,7 @@
     "variables": {
         "netbiosDomainName": "[split(parameters('domainName'), '.')[0]]",
         "virtualNetworkName": "[concat(resourceGroup().name, '-vnet')]",
-        "storageAccountName": "[concat(resourceGroup().name, 'stg', substring(uniquestring(resourceGroup().name),0,3))]",
+        "storageAccountName": "[concat(toLower(resourceGroup().name), 'stg', substring(uniquestring(resourceGroup().name),0,3))]",
         "vmPrefixes": ["wad", "sql", "iis", "mgt"],
         "WAD": 0, "SQL": 1, "IIS": 2, "MGT": 3,
         "copy": [
