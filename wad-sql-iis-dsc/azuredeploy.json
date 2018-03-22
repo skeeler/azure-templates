@@ -350,6 +350,8 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('IIS')].name)]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('SQL')].name, 'DomainMember')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('MGT')].name, 'DomainMember')]",
                 "UpdateVnetDnsServers"
             ],
             "properties": {
