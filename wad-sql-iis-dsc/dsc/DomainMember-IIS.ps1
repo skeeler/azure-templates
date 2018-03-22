@@ -64,7 +64,7 @@ Configuration DomainMember-IIS
         <# -- WindowsFeatureSet requires PowerShell 5.0 #>
         WindowsFeatureSet RequiredFeatures
         {
-            Name = @("RSAT-AD-PowerShell", "Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FileAndStorage-Services", "FS-FileServer")
+            Name = @("Web-Server", "Web-Default-Doc", "Web-Static-Content", "Web-Windows-Auth", "Web-Mgmt-Console", "Web-Asp-Net45", "NET-WCF-HTTP-Activation45", "FileAndStorage-Services", "FS-FileServer")
             Ensure = 'Present'
             DependsOn = "[xComputer]DomainJoin"
         }
@@ -97,7 +97,7 @@ Configuration DomainMember-IIS
         Script ChangePasswordAtNextLogon
 	    {
       	    SetScript = {
-                Install-Module -Name "ActiveDirectory" 
+                Add-WindowsFeature -Name "RSAT-AD-PowerShell" 
                 Get-ADUser -Identity $Admincreds.UserName | Set-ADUser -ChangePasswordAtLogon $true
                 Write-Verbose -Verbose "Configure admin account to force password change at next login" 
             }
