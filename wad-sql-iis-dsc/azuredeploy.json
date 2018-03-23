@@ -350,8 +350,6 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('IIS')].name)]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('SQL')].name, 'DomainMember')]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('MGT')].name, 'DomainMember')]",
                 "UpdateVnetDnsServers"
             ],
             "properties": {
@@ -438,12 +436,14 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('resourceNames')[variables('MGT')].name, '/DomainMember')]",
+            "name": "[concat(variables('resourceNames')[variables('MGT')].name, '/DomainMember-MGT')]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', variables('resourceNames')[variables('MGT')].name)]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('WAD')].name, 'DomainController')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('SQL')].name, 'DomainMember')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('resourceNames')[variables('IIS')].name, 'DomainMember-IIS')]",
                 "UpdateVnetDnsServers"
             ],
             "properties": {
@@ -456,6 +456,8 @@
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
                     "configurationFunction": "DomainMember.ps1\\DomainMember",
                     "properties": {
+                        "ChangePasswordAtNextLogon": true,
+                        "RDPUserAuthentication": "NonSecure",
                         "DNSServer": "[variables('dnsServerAddress')]",
                         "DomainName": "[parameters('domainName')]",
                         "AdminCreds": {

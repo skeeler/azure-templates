@@ -94,18 +94,6 @@ Configuration DomainMember-IIS
         }
         #>
 
-        Script ChangePasswordAtNextLogon
-	    {
-      	    SetScript = {
-                Add-WindowsFeature -Name "RSAT-AD-PowerShell" 
-                Get-ADUser -Identity $using:Admincreds.UserName | Set-ADUser -Credential $using:DomainCreds -ChangePasswordAtLogon $true
-                Write-Verbose -Verbose "Configure admin account to force password change at next login" 
-            }
-            GetScript =  { @{} }
-            TestScript = { $false }
-	        DependsOn = "[Script]Install_Net_4.6.1"
-        }
-
         Script Install_Net_4.6.1
         {
             DependsOn = "[WindowsFeatureSet]RequiredFeatures"
