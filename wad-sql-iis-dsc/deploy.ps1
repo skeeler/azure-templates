@@ -107,8 +107,13 @@ if ($deploySource -eq "command-line")
     $domainName = "contoso.local"
     $_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/master/wad-sql-iis-dsc"
 
+    # These parameters are optional, and if not specified, the default behavior is to not force a password
+    # reset and keep the RDP authenication requiring NLA (more secure)
+    $changePasswordAtNextLogon = $true
+    $rdpUserAuthentication = "NonSecure"
+
     Write-Output "Deploying using local template file and command-line parameters..."
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -ChangePasswordAtNextLogon $true -RDPUserAuthentication "NonSecure" -Verbose #-DeploymentDebugLogLevel All
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -ChangePasswordAtNextLogon $changePasswordAtNextLogon -RDPUserAuthentication $rdpUserAuthentication -Verbose #-DeploymentDebugLogLevel All
 
     # https://azure.microsoft.com/en-us/blog/debugging-arm-template-deployments/
 }
