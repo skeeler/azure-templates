@@ -108,7 +108,7 @@ if ($deploySource -eq "command-line")
     $_artifactsLocation = "https://raw.githubusercontent.com/skeeler/azure-templates/master/wad-sql-iis-dsc"
 
     Write-Output "Deploying using local template file and command-line parameters..."
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -Verbose   #-DeploymentDebugLogLevel All
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -dnsQualifier $dnsQualifier -adminUser $adminUserName -adminPassword $adminPassword -domainName $domainName -Name $deployName -_artifactsLocation $_artifactsLocation -ChangePasswordAtNextLogon $true -RDPUserAuthentication "NonSecure" -Verbose #-DeploymentDebugLogLevel All
 
     # https://azure.microsoft.com/en-us/blog/debugging-arm-template-deployments/
 }

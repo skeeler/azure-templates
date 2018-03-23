@@ -68,6 +68,11 @@ Configuration DomainMember-MGT
       	    SetScript = {
                 Add-WindowsFeature -Name "RSAT-AD-PowerShell" 
                 Get-ADUser -Identity $using:Admincreds.UserName | Set-ADUser -Credential $using:DomainCreds -ChangePasswordAtLogon $true
+                if ($using:RDPUserAuthentication -eq "NonSecure")
+                {
+                    Write-Verbose "NLA is disabled, so we will set SecurityLayer to 0"
+                    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "SecurityLayer" -Value 0
+                }
                 Write-Verbose -Verbose "Configured admin account to force password change at next login" 
             }
 
@@ -79,7 +84,7 @@ Configuration DomainMember-MGT
                     Write-Verbose -Verbose "Checking Network Level Authentication (NLA) setting before configuring admin account to force password change at next login..."
                     if ($using:RDPUserAuthentication -eq "NonSecure")
                     {
-                        Write-Verbose "NLA is disabled, so we are safe to set ChangePasswordAtNextLogon as requested"
+                        Write-Verbose "NLA is disabled, so we will set ChangePasswordAtNextLogon as requested"
                         return $false
                     }
                     else

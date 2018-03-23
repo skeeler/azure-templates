@@ -40,6 +40,19 @@
                 "description": "Auto-generated token to access _artifactsLocation"
             },
             "defaultValue": ""
+        },
+
+        "ChangePasswordAtNextLogon": {
+            "type": "bool",
+            "defaultValue": false
+        },
+
+        "RDPUserAuthentication": {
+            "type": "string",
+            "defaultValue": "Secure",
+            "allowedValues": [
+                "Secure", "NonSecure"
+            ]
         }
     },
     "variables": {
@@ -456,8 +469,8 @@
                     "sasToken": "[parameters('_artifactsLocationSasToken')]",
                     "configurationFunction": "DomainMember-MGT.ps1\\DomainMember-MGT",
                     "properties": {
-                        "ChangePasswordAtNextLogon": true,
-                        "RDPUserAuthentication": "NonSecure",
+                        "ChangePasswordAtNextLogon": "[parameters('ChangePasswordAtNextLogon')]",
+                        "RDPUserAuthentication": "[parameters('RDPUserAuthentication')]",
                         "DNSServer": "[variables('dnsServerAddress')]",
                         "DomainName": "[parameters('domainName')]",
                         "AdminCreds": {
