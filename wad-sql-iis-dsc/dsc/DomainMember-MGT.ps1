@@ -11,11 +11,14 @@ Configuration DomainMember-MGT
         [Int]$RetryCount=20,
         [Int]$RetryIntervalSec=60,
 
-        [Bool]$ChangePasswordAtNextLogon=$false,
-        [String]$RDPUserAuthentication="Secure",
-
         [Parameter(Mandatory)]
-        [String]$DNSServer
+        [String]$DNSServer,
+
+        [Parameter()]
+        [Bool]$ChangePasswordAtNextLogon=$false,
+
+        [Parameter()]
+        [String]$RDPUserAuthentication="Secure"
     )
 
     Import-DscResource -ModuleName xActiveDirectory, xComputerManagement, xNetworking
