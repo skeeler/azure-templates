@@ -98,7 +98,7 @@ Configuration DomainMember-IIS
 	    {
       	    SetScript = {
                 Add-WindowsFeature -Name "RSAT-AD-PowerShell" 
-                Get-ADUser -Identity $using:Admincreds.UserName | Set-ADUser -ChangePasswordAtLogon $true
+                Get-ADUser -Identity $using:Admincreds.UserName | Set-ADUser -Credential $using:DomainCreds -ChangePasswordAtLogon $true
                 Write-Verbose -Verbose "Configure admin account to force password change at next login" 
             }
             GetScript =  { @{} }
