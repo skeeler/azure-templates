@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "newVMName": {
+      "type": "string",
+      "defaultValue": "target"
+    },
+    "labName": {
+      "type": "string",
+      "defaultValue": "DL_GATEWAY_1001_DEV"
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "username"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "canadacentral",
+			"allowedValues": [
+				"canadacentral",
+				"canadaeast"
+			]
+    }
+  },
+  "variables": {
+    "templateFolderPrefix": "[concat(parameters('_artifactsLocation'),  '/templates/')]"
+  },
+  "resources": [
+    {
+      "name": "sampleVM",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01", 
+      "location" :"[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(  variables('templateFolderPrefix'), 'computeVm.json' , parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "assetName": {
+            "value": "sampleVM"
+          },
+          "virtualMachineSize": {
+            "value": "Basic_A0"
+          },
+          "imagePublisher": {
+            "value": "Canonical"
+          },
+          "imageOffer": {
+            "value": "UbuntuServer"
+          },
+          "ubuntuOSVersion": {
+            "value": "16.04.0-LTS"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "devLabName": {
+            "value": "[parameters('labName')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "labVMId": {
+      "type": "string",
+      "value": "[variables('templateFolderPrefix')]"
+    }
+  }
+}
