@@ -36,7 +36,7 @@
       "metadata": {
         "description": "Desired Size of the VM. Any valid option accepted but if you choose premium storage type you must choose a DS class VM size."
       },
-      "defaultValue": "Standard_DS2"
+      "defaultValue": "Standard_D2s_V3"
     },
     "vmVisualStudioVersion": {
       "type": "string",
@@ -83,7 +83,7 @@
     },
     "setupChocolatelyScriptLocation": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/visual-studio-dev-vm-chocolatey/scripts/",
+      "defaultValue": "https://raw.githubusercontent.com/skeeler/azure-templates/master/visual-studio-dev-vm/scripts/",
       "metadata": {
         "description": "Public uri location of PowerShell Chocolately setup script"
       }

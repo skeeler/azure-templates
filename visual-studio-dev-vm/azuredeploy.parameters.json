@@ -18,13 +18,13 @@
       "value": "GEN-PASSWORD"
     },
     "vmSize": {
-      "value": "Standard_DS2"
+      "value": "Standard_D2s_V3"
     },
     "vmVisualStudioVersion": {
       "value": "VS-2017-Ent-Latest-Win10-N"
     },
     "chocoPackages": {
-      "value": "sysinternals"
+      "value": "azurepowershell;azure-cli"
     }
   }
 }
