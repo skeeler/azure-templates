@@ -229,15 +229,15 @@
               "displayName": "SetupChocolatey"
             },
             "properties": {
-              "publisher": "Microsoft.Azure.Extensions",
+              "publisher": "Microsoft.Compute",
               "type": "CustomScriptExtension",
-              "typeHandlerVersion": "2.0",
+              "typeHandlerVersion": "1.9",
               "autoUpgradeMinorVersion": true,
               "settings": {
                 "fileUris": [
                   "[concat(parameters('setupChocolatelyScriptLocation'),parameters('setupChocolateyScriptFileName'))]"
                 ],
-                "commandToExecute": "[concat('powershell -ExecutionPolicy bypass -File ',parameters('setupChocolateyScriptFileName'),' -chocoPackages ',parameters('chocoPackages'))]"
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',parameters('setupChocolateyScriptFileName'),' -chocoPackages ',parameters('chocoPackages'))]"
               }
 
             }
