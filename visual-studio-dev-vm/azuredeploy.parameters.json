@@ -9,7 +9,7 @@
       "value": "Premium_LRS"
     },
     "vmName": {
-      "value": "VSVM"
+      "value": "vs2017Win10"
     },
     "vmAdminUserName": {
       "value": "YourAdminName"
